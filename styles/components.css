@@ -519,13 +519,19 @@
     background: rgba(0, 0, 0, 0.25);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
-    padding: var(--space-5);
-    padding-top: calc(var(--space-5) + 6px);
+    padding: var(--space-6) var(--space-5);
+    padding-top: calc(var(--space-6) + 8px);
     margin: var(--space-4) 0;
-    margin-top: calc(var(--space-4) + 12px);
+    margin-top: calc(var(--space-4) + 14px);
     overflow: visible;
     position: relative;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.formula-box .MathJax,
+.formula-box .MathJax_Display,
+.formula-box mjx-container {
+    padding: 6px 0;
 }
 
 .formula-box:hover {

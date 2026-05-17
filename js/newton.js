@@ -434,7 +434,7 @@ function buildProgressiveHTML(rawX, rawY, validX, validY, xEval) {
             const prevLabel1 = Array.from({length: order}, (_, k) => `x_{${i+1+k}}`).join(', ');
             const prevLabel2 = Array.from({length: order}, (_, k) => `x_{${i+k}}`).join(', ');
 
-            ddHtml += `<div class="computation" style="margin-bottom:12px;padding:10px 14px;border-left:3px solid var(--primary);border-radius:6px;background:var(--surface-alt, rgba(99,102,241,0.04));">`;
+            ddHtml += `<div class="computation" style="margin-bottom:14px;padding:14px 16px;border-left:3px solid var(--primary);border-radius:6px;background:var(--surface-alt, rgba(99,102,241,0.04));">`;
             ddHtml += `<div style="text-align:center;">`;
             ddHtml += `\\[ f[${label}] = \\frac{f[${prevLabel1}] - f[${prevLabel2}]}{x_{${i+order}} - x_{${i}}} \\]`;
             ddHtml += `\\[ = \\frac{${fmt(numerator1)} - ${fmt(numerator2)}}{${fmt(x[i+order])} - ${fmt(x[i])}} \\]`;
@@ -496,13 +496,33 @@ function buildProgressiveHTML(rawX, rawY, validX, validY, xEval) {
     </div>`;
 
     /* ──────── Koefisien Ringkasan ──────── */
+    let coeffDetailHtml = '';
+    for (let i = 0; i < vn; i++) {
+        const ddLabel = Array.from({length: i + 1}, (_, k) => `x_{${k}}`).join(', ');
+        if (i === 0) {
+            coeffDetailHtml += `<div class="computation" style="margin-bottom:8px;padding:8px 14px;border-left:3px solid var(--primary);border-radius:6px;background:var(--surface-alt, rgba(99,102,241,0.04));">`;
+            coeffDetailHtml += `<div style="text-align:center;">`;
+            coeffDetailHtml += `\\[ b_0 = f[x_0] = y_0 = ${fmt(coeffs[0])} \\]`;
+            coeffDetailHtml += `</div></div>`;
+        } else {
+            const prevIndices = Array.from({length: i + 1}, (_, k) => fmt(x[k])).join(', ');
+            coeffDetailHtml += `<div class="computation" style="margin-bottom:8px;padding:8px 14px;border-left:3px solid var(--primary);border-radius:6px;background:var(--surface-alt, rgba(99,102,241,0.04));">`;
+            coeffDetailHtml += `<div style="text-align:center;">`;
+            coeffDetailHtml += `\\[ b_{${i}} = f[${ddLabel}] = f[${prevIndices}] = ${fmt(coeffs[i])} \\]`;
+            coeffDetailHtml += `</div></div>`;
+        }
+    }
+
     html += `
     <div class="step">
         <div class="step__number">${stepAfterDD + 1}</div>
         <div class="step__title">Koefisien Polinom (Diagonal Utama)</div>
         <div class="step__content">
-            <div class="formula-box formula-box--highlight">
-                <div style="text-align:center;padding:8px 0;">
+            <p style="margin-bottom:10px;color:var(--text-muted);font-size:0.88rem;">Koefisien \\(b_i\\) diambil dari diagonal utama tabel (baris pertama setiap orde):</p>
+            ${coeffDetailHtml}
+            <div class="formula-box formula-box--highlight" style="margin-top:14px;">
+                <span class="formula-box__label">Ringkasan Koefisien</span>
+                <div style="text-align:center;padding:10px 0;">
                     \\[ ${coeffs.map((c, i) => `b_{${i}} = ${fmt(c)}`).join(' \\;,\\;\\; ')} \\]
                 </div>
             </div>
