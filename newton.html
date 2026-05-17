@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Kalkulator Interpolasi Polinom Newton dengan grafik interaktif dan langkah pengerjaan lengkap.">
+    <title>Polinom Newton - Interpolasi Numerik</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/global.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <script>window.MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] }, options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] } };</script>
+</head>
+
+<body class="page-enter">
+
+    <div class="bg-orbs"></div>
+    <div class="bg-orb-3"></div>
+
+    <nav class="navbar">
+        <div class="navbar__inner">
+            <a href="index.html" class="navbar__logo">
+                <span class="navbar__logo-icon">KN</span>
+                <span>Komputasi Numerik</span>
+            </a>
+            <button class="navbar__toggle" id="navToggle"><i data-lucide="menu"
+                    style="width:24px;height:24px;"></i></button>
+            <ul class="navbar__nav" id="navMenu">
+                <li><a href="index.html" class="navbar__link">Beranda</a></li>
+                <li><a href="lanjar.html" class="navbar__link">Lanjar</a></li>
+                <li><a href="kuadratik.html" class="navbar__link">Kuadratik</a></li>
+                <li><a href="kubik.html" class="navbar__link">Kubik</a></li>
+                <li><a href="newton.html" class="navbar__link active">Newton</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <div class="container">
+            <a href="index.html" class="page-header__back fade-in"><i data-lucide="arrow-left"
+                    style="width:16px;height:16px;"></i> Kembali ke Beranda</a>
+            <div class="flex items-center gap-4 fade-in" style="margin-bottom:12px;">
+                <span class="badge" style="background:rgba(251,146,60,0.15);color:#fb923c;"><i data-lucide="git-branch"
+                        style="width:12px;height:12px;"></i> Orde-N</span>
+                <span class="badge badge--accent">N Titik Data</span>
+            </div>
+            <h1 class="fade-in">Polinom Newton</h1>
+            <p class="fade-in" style="max-width:600px;margin-top:12px;">Interpolasi polinom Newton menggunakan N titik
+                data (minimal 2). Metode divided differences membangun polinom dari orde rendah ke tinggi secara
+                bertahap.</p>
+        </div>
+    </header>
+
+    <section class="section--compact">
+        <div class="container">
+            <div class="workspace" id="newtonWorkspace">
+                <!-- Left: Input -->
+                <div class="workspace__input">
+                    <div class="card card--no-hover fade-in">
+                        <div class="flex items-center justify-between" style="margin-bottom:20px;">
+                            <h3><i data-lucide="input"
+                                    style="width:20px;height:20px;display:inline;vertical-align:middle;margin-right:8px;color:#fb923c;"></i>Input
+                                Data</h3>
+                            <button class="btn btn--ghost btn--sm" id="sampleBtn"><i data-lucide="test-tubes"
+                                    style="width:14px;height:14px;"></i> Contoh Data</button>
+                        </div>
+
+                        <div class="flex items-center gap-3" style="margin-bottom:16px;">
+                            <label class="form-label" style="margin-bottom:0;white-space:nowrap;">Jumlah Titik
+                                (n)</label>
+                            <input type="number" class="form-input" id="numPoints" value="4" min="2" max="20"
+                                style="width:80px;">
+                            <button class="btn btn--ghost btn--sm" id="applyPointsBtn"><i data-lucide="refresh-cw"
+                                    style="width:14px;height:14px;"></i> Terapkan</button>
+                        </div>
+
+                        <div id="pointsContainer"
+                            style="display:flex;flex-direction:column;gap:10px;max-height:320px;overflow-y:auto;padding-right:4px;">
+                        </div>
+
+                        <hr class="divider">
+                        <div class="form-group" style="max-width:250px;">
+                            <label class="form-label" for="xEval"><i data-lucide="crosshair"
+                                    style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:4px;"></i>Nilai
+                                x yang dicari</label>
+                            <input type="number" class="form-input" id="xEval" placeholder="Masukkan x" step="any">
+                        </div>
+                        <div id="errorContainer" style="margin-top:12px;display:flex;flex-direction:column;gap:8px;">
+                        </div>
+                        <p class="form-hint" style="margin-top:16px;text-align:center;">Hasil dihitung otomatis saat
+                            data diisi</p>
+                    </div>
+                </div>
+
+                <!-- Right: Chart -->
+                <div class="workspace__chart">
+                    <div class="chart-container fade-in">
+                        <div class="chart-empty" id="chartEmpty">
+                            <div class="chart-empty__icon"><i data-lucide="line-chart"
+                                    style="width:48px;height:48px;"></i></div>
+                            <p class="chart-empty__text">Masukkan data titik untuk melihat grafik interpolasi</p>
+                        </div>
+                        <canvas id="chart" style="display:none;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="workspace__results hidden" id="resultSection">
+                    <h2 class="section-title fade-in"><i data-lucide="list-checks" class="section-title__icon"
+                            style="color:#fb923c;"></i>Langkah Pengerjaan</h2>
+                    <div id="stepsContainer"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__inner">
+                <span class="footer__text">Tugas Akhir Komputasi Numerik 2026</span>
+                <span class="footer__text">Universitas Sumatera</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/math-utils.js"></script>
+    <script src="js/shared.js"></script>
+    <script src="js/newton.js"></script>
+    <script>
+    const sp = document.createElement('div');
+    sp.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#6366f1,#818cf8);z-index:999;transition:width 0.1s;border-radius:0 1px 1px 0;';
+    document.body.appendChild(sp);
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        sp.style.width = h > 0 ? `${(window.scrollY / h) * 100}%` : '0%';
+    });
+    </script>
+</body>
+
+</html>
